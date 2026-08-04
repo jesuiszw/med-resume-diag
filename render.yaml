@@ -19,7 +19,7 @@ services:
         value: production
 
   # ─── 前端静态站点 ───
-  - type: static
+  - type: staticSite
     name: med-resume-diag-web
     rootDir: frontend
     buildCommand: npm install && npm run build
