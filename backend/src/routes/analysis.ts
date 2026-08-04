@@ -46,7 +46,7 @@ function isValidDirection(direction: string): direction is ExpectedDirection {
  *
  * Receives a .docx resume file and an expected direction, then:
  * 1. Parses the Word document to extract text and structured data
- * 2. Runs rule-based analysis for optimization suggestions and job matching in parallel
+ * 2. Runs rule-based analysis (suggestions + scores + job matching in parallel)
  * 3. Searches job market information (web scrape with database fallback)
  * 4. Returns the aggregated analysis result
  *
@@ -98,15 +98,19 @@ router.post('/analyze', upload.single('file'), async (req: Request, res: Respons
       });
     }
 
-    // Step 2: Run rule-based analysis (suggestions + job matching in parallel)
-    console.log('[Analyze] Step 2/3: Running analysis (suggestions + job matching)...');
+    // Step 2: Run rule-based analysis (scores + suggestions + job matching in parallel)
+    console.log('[Analyze] Step 2/3: Running analysis (scores + suggestions + job matching)...');
 
-    const [suggestions, jobMatches] = await Promise.all([
+    const [analysisData, jobMatches] = await Promise.all([
       analyzeResume(parsedResume.rawText, parsedResume.structured, direction),
       matchJobs(parsedResume.rawText, direction),
     ]);
 
-    console.log(`[Analyze] Got ${suggestions.length} suggestions and ${jobMatches.length} job matches`);
+    console.log(
+      `[Analyze] Got ${analysisData.suggestions.length} suggestions, ` +
+      `overall score ${analysisData.overallScore}/100, ` +
+      `${jobMatches.length} job matches`
+    );
 
     // Step 3: Search job market (web scrape with database fallback)
     console.log('[Analyze] Step 3/3: Searching job market information...');
@@ -115,7 +119,7 @@ router.post('/analyze', upload.single('file'), async (req: Request, res: Respons
 
     // Assemble final result
     const result: AnalysisResult = {
-      suggestions,
+      ...analysisData,
       jobMatches,
       jobMarket,
     };
