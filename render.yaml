@@ -1,33 +1,15 @@
-# Render Blueprint — 医药简历诊断工具
-# https://render.com/docs/blueprint-spec
-# 部署后生成两个服务：
-#   后端 API: https://med-resume-diag-api.onrender.com
-#   前端 Web: https://med-resume-diag-web.onrender.com
+# Render Blueprint — 医药简历诊断工具 (单服务架构)
+# 后端 Express 同时托管前端静态文件，一个服务搞定一切
+# 部署后访问地址: https://med-resume-diag.onrender.com
 
 services:
-  # ─── 后端 API 服务 ───
   - type: web
-    name: med-resume-diag-api
+    name: med-resume-diag
     env: node
-    rootDir: backend
     plan: free
-    buildCommand: npm install && npm run build
-    startCommand: npm start
+    buildCommand: cd frontend && npm install && npm run build && cd ../backend && npm install && npm run build
+    startCommand: cd backend && npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
-
-  # ─── 前端静态站点 ───
-  - type: staticSite
-    name: med-resume-diag-web
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishDir: ./dist
-    envVars:
-      - key: VITE_API_BASE_URL
-        value: https://med-resume-diag-api.onrender.com/api
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
