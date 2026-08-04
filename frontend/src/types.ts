@@ -93,6 +93,59 @@ export interface StructuredResumeData {
   skills: string;
 }
 
+/** 评分维度状态 */
+export type ScoreStatus = 'excellent' | 'good' | 'average' | 'poor';
+
+/** 评分维度详情 */
+export interface ScoreDimension {
+  /** 维度名称 */
+  name: string;
+  /** 得分 */
+  score: number;
+  /** 满分 */
+  maxScore: number;
+  /** 权重 */
+  weight: number;
+  /** 维度描述 */
+  description: string;
+  /** 评估状态 */
+  status: ScoreStatus;
+  /** 改进建议 */
+  tips: string[];
+}
+
+/** 分析统计信息 */
+export interface AnalysisStats {
+  /** 总建议数 */
+  totalSuggestions: number;
+  /** 高优先级建议数 */
+  highPriority: number;
+  /** 中优先级建议数 */
+  mediumPriority: number;
+  /** 低优先级建议数 */
+  lowPriority: number;
+  /** 命中关键词数 */
+  keywordHits: number;
+  /** 关键词总数 */
+  keywordTotal: number;
+}
+
+/** 诊断统计（与 AnalysisStats 等价，新代码推荐使用） */
+export interface DiagnosisStats {
+  /** 总建议数 */
+  totalSuggestions: number;
+  /** 高优先级建议数 */
+  highPriority: number;
+  /** 中优先级建议数 */
+  mediumPriority: number;
+  /** 低优先级建议数 */
+  lowPriority: number;
+  /** 命中关键词数 */
+  keywordHits: number;
+  /** 关键词总数 */
+  keywordTotal: number;
+}
+
 /** 完整分析结果 */
 export interface AnalysisResult {
   /** 优化建议列表 */
@@ -101,6 +154,14 @@ export interface AnalysisResult {
   jobMatches: JobMatch[];
   /** 岗位市场信息 */
   jobMarket: JobMarketInfo;
+  /** 综合得分 0-100 */
+  overallScore: number;
+  /** 5 维度评分详情 */
+  dimensions: ScoreDimension[];
+  /** AI 生成的总结文字 */
+  summary: string;
+  /** 诊断统计信息 */
+  stats: DiagnosisStats;
 }
 
 /** 上传响应 */
