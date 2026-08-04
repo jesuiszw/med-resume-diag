@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import analysisRouter from './routes/analysis';
 
 // Load environment variables
@@ -38,6 +39,18 @@ app.get('/api/health', (_req, res) => {
 
 // Mount analysis routes
 app.use('/api', analysisRouter);
+
+// ─── Serve frontend static files in production ───
+// The built React app lives in frontend/dist (relative to repo root).
+// In compiled JS, __dirname = backend/dist, so ../../frontend/dist points to the right place.
+if (process.env.NODE_ENV === 'production') {
+  const frontendDist = path.resolve(__dirname, '../../frontend/dist');
+  app.use(express.static(frontendDist));
+  // SPA fallback: any non-API GET request serves index.html
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
 
 // Global error handler
 app.use(
