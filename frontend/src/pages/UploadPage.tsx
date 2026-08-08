@@ -133,7 +133,6 @@ function UploadPage() {
     try {
       const result = await uploadAndAnalyze(selectedFile, direction);
       clearInterval(progressInterval);
-      // Pass result to ResultPage via navigation state
       navigate('/result', { state: { result, direction } });
     } catch (err: unknown) {
       clearInterval(progressInterval);
@@ -160,10 +159,10 @@ function UploadPage() {
 
   return (
     <div className="app-container">
-      <AppBar position="static" elevation={0} sx={{ bgcolor: '#1A73E8' }}>
+      <AppBar position="static" elevation={0} sx={{ bgcolor: '#334155' }}>
         <Toolbar>
-          <DescriptionIcon sx={{ mr: 1 }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
+          <DescriptionIcon sx={{ mr: 1, color: '#D97706' }} />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 600, color: '#F1F5F9' }}>
             医药简历诊断工具
           </Typography>
         </Toolbar>
@@ -171,17 +170,17 @@ function UploadPage() {
 
       <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography variant="h4" gutterBottom sx={{ color: '#1A73E8', fontWeight: 700 }}>
+          <Typography variant="h4" gutterBottom sx={{ color: '#1E293B', fontWeight: 700 }}>
             简历智能诊断
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" sx={{ color: '#475569' }}>
             上传您的 Word 简历，选择期望方向，获取专业的优化建议与岗位匹配
           </Typography>
         </Box>
 
         {/* Upload Area */}
         <Paper
-          elevation={isDragging ? 8 : 2}
+          elevation={isDragging ? 8 : 1}
           onClick={handleClick}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -191,10 +190,10 @@ function UploadPage() {
             mb: 3,
             textAlign: 'center',
             cursor: 'pointer',
-            border: isDragging ? '3px dashed #1A73E8' : '2px dashed #D0D5DD',
-            bgcolor: isDragging ? '#E8F0FE' : '#FAFBFC',
+            border: isDragging ? '3px dashed #D97706' : '2px dashed #CBD5E1',
+            bgcolor: isDragging ? '#FEF3C7' : '#FFFFFF',
             transition: 'all 0.3s ease',
-            borderRadius: 3,
+            borderRadius: 2,
           }}
         >
           <input
@@ -204,22 +203,22 @@ function UploadPage() {
             hidden
             onChange={handleFileInputChange}
           />
-          <CloudUploadIcon sx={{ fontSize: 64, color: '#1A73E8', mb: 2 }} />
+          <CloudUploadIcon sx={{ fontSize: 64, color: '#64748B', mb: 2 }} />
           {selectedFile ? (
             <Box>
-              <Typography variant="h6" sx={{ color: '#1A73E8' }}>
+              <Typography variant="h6" sx={{ color: '#334155' }}>
                 {selectedFile.name}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{ color: '#64748B' }}>
                 {(selectedFile.size / 1024).toFixed(1)} KB · 点击重新选择
               </Typography>
             </Box>
           ) : (
             <Box>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ color: '#1E293B' }}>
                 拖拽简历文件到此处，或点击选择
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{ color: '#64748B' }}>
                 仅支持 .docx 格式，文件大小不超过 10MB
               </Typography>
             </Box>
@@ -235,6 +234,11 @@ function UploadPage() {
             label="期望方向"
             onChange={(e) => setDirection(e.target.value as ExpectedDirection)}
             disabled={isLoading}
+            sx={{
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: '#CBD5E1' },
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#94A3B8' },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#334155' },
+            }}
           >
             {DIRECTION_OPTIONS.map((dir) => (
               <MenuItem key={dir} value={dir}>
@@ -253,8 +257,8 @@ function UploadPage() {
 
         {/* Loading Progress */}
         {isLoading && (
-          <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 3 }}>
-            <Typography variant="body1" sx={{ mb: 2, fontWeight: 600, color: '#1A73E8' }}>
+          <Paper elevation={1} sx={{ p: 3, mb: 3, borderRadius: 2, border: '1px solid #D1D5DB' }}>
+            <Typography variant="body1" sx={{ mb: 2, fontWeight: 600, color: '#334155' }}>
               {LOADING_STEPS[loadingStep]}
             </Typography>
             <LinearProgress
@@ -263,7 +267,8 @@ function UploadPage() {
               sx={{
                 height: 8,
                 borderRadius: 4,
-                '& .MuiLinearProgress-bar': { bgcolor: '#1A73E8' },
+                bgcolor: '#E5E7EB',
+                '& .MuiLinearProgress-bar': { bgcolor: '#D97706' },
               }}
             />
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
@@ -272,8 +277,11 @@ function UploadPage() {
                   key={idx}
                   label={step}
                   size="small"
-                  color={idx < loadingStep ? 'success' : idx === loadingStep ? 'primary' : 'default'}
-                  variant={idx <= loadingStep ? 'filled' : 'outlined'}
+                  sx={{
+                    bgcolor: idx < loadingStep ? '#D1FAE5' : idx === loadingStep ? '#FEF3C7' : '#F3F4F6',
+                    color: idx < loadingStep ? '#059669' : idx === loadingStep ? '#D97706' : '#9CA3AF',
+                    border: 'none',
+                  }}
                 />
               ))}
             </Box>
@@ -291,9 +299,10 @@ function UploadPage() {
             py: 1.5,
             fontSize: '1.1rem',
             fontWeight: 600,
-            bgcolor: '#1A73E8',
-            '&:hover': { bgcolor: '#1557B0' },
-            borderRadius: 3,
+            bgcolor: '#334155',
+            '&:hover': { bgcolor: '#1E293B' },
+            borderRadius: 2,
+            textTransform: 'none',
           }}
         >
           {isLoading ? '分析中…' : '开始诊断'}
@@ -302,8 +311,7 @@ function UploadPage() {
         {/* Footer note */}
         <Typography
           variant="caption"
-          color="text.secondary"
-          sx={{ display: 'block', textAlign: 'center', mt: 3 }}
+          sx={{ display: 'block', textAlign: 'center', mt: 3, color: '#9CA3AF' }}
         >
           本工具使用 AI 进行分析，结果仅供参考。您的简历内容不会被存储。
         </Typography>
