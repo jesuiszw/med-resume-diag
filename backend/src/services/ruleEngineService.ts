@@ -140,6 +140,26 @@ function scoreCompleteness(structured: StructuredResumeData): ScoreDimension {
 }
 
 /**
+ * Flexible keyword matching: checks if keyword or its core stem appears in text.
+ * For compound terms like "数据分析能力", also checks if the base "数据分析" exists.
+ */
+function flexibleIncludes(text: string, keyword: string): boolean {
+  // Direct match
+  if (text.includes(keyword)) return true;
+
+  // For compound Chinese terms ending with 能力/技能/经验/管理/能力等, try base stem
+  const suffixes = ['能力', '技能', '经验', '管理', '能力', '知识', '意识', '素质', '素养'];
+  for (const suffix of suffixes) {
+    if (keyword.endsWith(suffix) && keyword.length > suffix.length + 2) {
+      const stem = keyword.slice(0, -suffix.length);
+      if (text.includes(stem)) return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * Scores industry keyword match for the given direction.
  * Counts how many direction-specific keywords appear in the resume text.
  *
@@ -156,35 +176,33 @@ function scoreIndustryMatch(
   const directionKeywords = keywordSet.keywords;
   const skillKeywords = keywordSet.requiredSkills;
 
-  // Count matched direction keywords
+  // Count matched direction keywords (flexible matching)
   const matchedKeywords: string[] = [];
   const missingKeywords: string[] = [];
 
   for (const kw of directionKeywords) {
-    if (rawText.includes(kw)) {
+    if (flexibleIncludes(rawText, kw)) {
       matchedKeywords.push(kw);
     } else {
       missingKeywords.push(kw);
     }
   }
 
-  // Count matched required skills
+  // Count matched required skills (flexible matching)
   const matchedSkills: string[] = [];
   for (const sk of skillKeywords) {
-    if (rawText.includes(sk)) {
+    if (flexibleIncludes(rawText, sk)) {
       matchedSkills.push(sk);
     }
   }
 
-  const totalKeywords = directionKeywords.length + skillKeywords.length;
-  const totalMatched = matchedKeywords.length + matchedSkills.length;
-  const matchRatio = totalMatched / totalKeywords;
-  const score = Math.round(matchRatio * maxScore);
+  // Scoring: each matched keyword gives 2 points, skills give 1 point each, capped at maxScore
+  const score = Math.min(maxScore, matchedKeywords.length * 2 + matchedSkills.length * 1);
 
   const details: string[] = [];
   if (missingKeywords.length > 0) {
     const topMissing = missingKeywords.slice(0, 5);
-    details.push(`缺少方向相关关键词：${topMissing.join('、')}${missingKeywords.length > 5 ? '等' : ''}`);
+    details.push(`可补充方向相关关键词：${topMissing.join('、')}${missingKeywords.length > 5 ? '等' : ''}`);
   }
   if (matchedKeywords.length === 0) {
     details.push('简历中几乎未出现该方向的核心行业术语');
