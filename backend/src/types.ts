@@ -80,59 +80,40 @@ export interface ParsedResume {
   structured: StructuredResumeData;
 }
 
-/** 评分维度状态 */
-export type ScoreStatus = 'excellent' | 'good' | 'average' | 'poor';
-
-/** 评分维度详情 */
+/** 单维度评分 */
 export interface ScoreDimension {
-  /** 维度名称，如"内容完整性" */
+  /** 维度名称（中文） */
   name: string;
-  /** 得分 0-100 */
+  /** 实际得分 */
   score: number;
-  /** 满分，如 25 */
+  /** 满分 */
   maxScore: number;
-  /** 权重，如 0.25 */
-  weight: number;
-  /** 维度描述 */
-  description: string;
-  /** 评估状态 */
-  status: ScoreStatus;
-  /** 改进建议 1-2 条 */
-  tips: string[];
+  /** 维度详细反馈 */
+  details: string[];
 }
 
-/** 分析统计信息 */
-export interface AnalysisStats {
-  /** 总建议数 */
-  totalSuggestions: number;
-  /** 高优先级建议数 */
-  highPriority: number;
-  /** 中优先级建议数 */
-  mediumPriority: number;
-  /** 低优先级建议数 */
-  lowPriority: number;
-  /** 命中关键词数 */
-  keywordHits: number;
-  /** 关键词总数 */
-  keywordTotal: number;
-}
-
-/** 简历分析核心数据（规则引擎产出，不含岗位数据） */
+/** 规则引擎返回的完整评分数据 */
 export interface ResumeAnalysisData {
-  /** 优化建议列表 */
-  suggestions: OptimizationSuggestion[];
-  /** 综合得分 0-100 */
-  overallScore: number;
-  /** 5 维度评分详情 */
+  /** 总分 0-100 */
+  totalScore: number;
+  /** 5 个维度评分 */
   dimensions: ScoreDimension[];
-  /** AI 生成的总结文字 */
+  /** 总体评语 */
   summary: string;
-  /** 统计信息 */
-  stats: AnalysisStats;
+  /** 优化建议 */
+  suggestions: OptimizationSuggestion[];
 }
 
 /** 完整分析结果 */
-export interface AnalysisResult extends ResumeAnalysisData {
+export interface AnalysisResult {
+  /** 总分 0-100 */
+  totalScore: number;
+  /** 各维度评分 */
+  dimensions: ScoreDimension[];
+  /** 总体评语 */
+  summary: string;
+  /** 优化建议列表 */
+  suggestions: OptimizationSuggestion[];
   /** 匹配岗位 Top-5 */
   jobMatches: JobMatch[];
   /** 岗位市场信息 */
