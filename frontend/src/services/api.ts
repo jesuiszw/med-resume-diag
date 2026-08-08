@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { AnalysisResult, ExpectedDirection } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_BASE_URL = '/api';
 
 /**
  * Uploads a .docx resume file and the selected expected direction to the backend,
@@ -26,7 +26,7 @@ export async function uploadAndAnalyze(
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-      timeout: 120000, // 2 minutes timeout for multiple LLM calls
+      timeout: 120000, // 2 minutes timeout for analysis
     }
   );
 
