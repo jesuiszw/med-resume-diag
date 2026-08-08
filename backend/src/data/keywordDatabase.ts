@@ -1,34 +1,26 @@
 import { ExpectedDirection } from '../types';
 
 /**
- * 方向关键词数据接口
+ * Keyword set for a specific career direction in the medical/device industry.
  */
-export interface DirectionKeywordData {
-  /** 对应的期望方向 */
-  direction: ExpectedDirection;
-  /** 核心中文关键词（10-20个） */
+export interface KeywordSet {
+  /** Core industry keywords for this direction (10-20 Chinese keywords) */
   keywords: string[];
-  /** 常见技能要求（5-10个） */
+  /** Required / commonly expected skills */
   requiredSkills: string[];
-  /** 典型岗位头衔（中英文，3-5个） */
+  /** Typical job titles for this direction */
   typicalTitles: string[];
-  /** 参考薪资范围 */
+  /** Salary range description */
   salaryRange: string;
-  /** 方向描述 */
-  description: string;
 }
 
 /**
- * 医药/器械行业关键词库
- * 按 10 个 ExpectedDirection 方向分类，覆盖产品经理、医学联络官、销售、市场、
- * 准入、临床、药物警戒、注册、商务拓展、器械销售等核心岗位方向。
+ * Keyword database covering all 10 ExpectedDirection values.
+ * Each entry contains curated, professionally-accurate terminology
+ * used in the Chinese pharmaceutical and medical-device industry.
  */
-export const KEYWORD_DATABASE: Record<ExpectedDirection, DirectionKeywordData> = {
-  // ──────────────────────────────────────────────
-  // 1. 产品经理 (Product Manager)
-  // ──────────────────────────────────────────────
+export const keywordDatabase: Record<ExpectedDirection, KeywordSet> = {
   [ExpectedDirection.ProductManager]: {
-    direction: ExpectedDirection.ProductManager,
     keywords: [
       '市场推广',
       '品牌管理',
@@ -43,397 +35,418 @@ export const KEYWORD_DATABASE: Record<ExpectedDirection, DirectionKeywordData> =
       '产品上市',
       '生命周期管理',
       '价格策略',
-      '推广活动',
+      'ROI分析',
+      '产品线管理',
+      '市场细分',
+      '推广方案',
       '学术会议',
       '专家网络',
-      '宣传物料',
-      '推广效果',
-      'ROI分析',
       '跨部门协作',
     ],
     requiredSkills: [
       '市场分析能力',
-      '项目管理',
-      '跨部门沟通',
-      '数据分析',
-      'PPT制作',
-      '演讲能力',
-      'KOL资源管理',
-      '策略制定',
+      '产品策划能力',
+      '项目管理能力',
+      '数据分析能力',
+      '跨部门沟通能力',
+      'PPT制作与演讲',
     ],
     typicalTitles: [
-      '产品经理 (Product Manager)',
-      '高级产品经理 (Senior Product Manager)',
-      '产品组经理 (Product Group Manager)',
-      '市场经理 (Marketing Manager)',
-      '品牌经理 (Brand Manager)',
+      '产品经理',
+      '高级产品经理',
+      '产品总监',
+      '治疗领域经理',
+      '市场部经理',
     ],
-    salaryRange: '15-40K·14薪',
-    description:
-      '负责药品或器械产品的市场策略制定、学术推广执行与生命周期管理，是连接医学、销售、市场准入等部门的枢纽角色。',
+    salaryRange: '20K-50K/月（外资药企中高级）',
   },
 
-  // ──────────────────────────────────────────────
-  // 2. 医学联络官 (MSL)
-  // ──────────────────────────────────────────────
   [ExpectedDirection.MSL]: {
-    direction: ExpectedDirection.MSL,
     keywords: [
       '医学联络',
+      '医学科学',
+      'KOL互动',
       '学术交流',
-      'KOL维护',
-      '医学策略',
-      '循证医学',
-      '文献检索',
-      '学术演讲',
-      '医学教育',
       '临床证据',
-      '医学信息',
-      '专家关系',
-      '学术会议',
-      '医学培训',
+      '医学策略',
+      '专家网络',
+      '医学教育',
+      '医学支持',
+      '文献检索',
+      '医学演讲',
+      '治疗领域',
+      '药物机制',
+      '临床试验数据',
+      '医学咨询',
+      '学术拜访',
+      '医学沟通',
       '疾病领域知识',
-      '产品医学定位',
+      '循证医学',
+      '医学事务',
     ],
     requiredSkills: [
-      '医学/药学硕博学历',
+      '医学/药学/生命科学硕士及以上',
       '学术演讲能力',
-      '文献检索与解读',
-      'KOL关系维护',
-      '跨部门沟通',
-      '疾病领域专业知识',
-      '医学写作',
+      '文献解读能力',
+      'KOL管理能力',
+      '跨部门协作能力',
     ],
     typicalTitles: [
-      '医学联络官 (Medical Science Liaison)',
-      '高级医学联络官 (Senior MSL)',
-      '医学顾问 (Medical Advisor)',
-      '医学事务经理 (Medical Affairs Manager)',
+      '医学联络官',
+      '高级医学联络官',
+      '医学事务经理',
+      '医学顾问',
+      'MSL Manager',
     ],
-    salaryRange: '20-50K·14薪',
-    description:
-      '作为企业与外部医学专家的学术桥梁，负责KOL学术交流、临床证据传递及医学策略支持，需具备扎实的医学/药学专业背景。',
+    salaryRange: '25K-60K/月（硕士起步，博士更优）',
   },
 
-  // ──────────────────────────────────────────────
-  // 3. 销售专员 (Sales Specialist)
-  // ──────────────────────────────────────────────
   [ExpectedDirection.SalesSpecialist]: {
-    direction: ExpectedDirection.SalesSpecialist,
     keywords: [
-      '销售管理',
+      '销售达成',
       '客户开发',
-      '渠道管理',
-      '招投标',
-      '区域管理',
-      '销售目标',
-      '客户关系',
+      '学术拜访',
       '终端覆盖',
-      '学术推广',
-      '销售策略',
-      '销售预测',
-      '费用管理',
-      '经销商管理',
-      '终端动销',
-    ],
-    requiredSkills: [
+      '销售指标',
       '客户关系管理',
-      '区域市场规划',
-      '销售谈判技巧',
-      '学术推广能力',
-      '目标导向',
-      '抗压能力',
-      '数据分析',
-    ],
-    typicalTitles: [
-      '医药代表 (Medical Representative)',
-      '高级医药代表 (Senior Medical Representative)',
-      '区域销售经理 (Regional Sales Manager)',
-      '销售专员 (Sales Specialist)',
-    ],
-    salaryRange: '10-30K·13薪',
-    description:
-      '负责指定区域内的药品销售与客户维护，通过学术推广和终端覆盖达成销售目标，是药企市场一线核心力量。',
-  },
-
-  // ──────────────────────────────────────────────
-  // 4. 市场营销 (Marketing Executive)
-  // ──────────────────────────────────────────────
-  [ExpectedDirection.MarketingExecutive]: {
-    direction: ExpectedDirection.MarketingExecutive,
-    keywords: [
-      '市场推广',
-      '品牌传播',
-      '内容营销',
-      '活动策划',
-      '数字营销',
-      '社交媒体营销',
-      '市场调研',
-      '消费者洞察',
-      '整合营销',
-      '品牌定位',
-      '推广策略',
-      '市场分析',
-      '营销预算',
-      '效果监测',
+      '渠道管理',
+      '药剂科',
+      '处方医生',
+      '销售区域',
+      '业绩增长',
+      '客户拜访',
+      '竞品应对',
+      '进院开发',
+      '销售报表',
+      'CRM系统',
+      '回款管理',
+      '临床推广',
+      '医院覆盖',
+      '销售目标',
     ],
     requiredSkills: [
-      '品牌策划能力',
-      '数字营销工具',
-      '活动项目管理',
-      '数据分析',
-      '创意文案',
-      '跨渠道整合',
-      '预算管理',
+      '沟通表达能力',
+      '客户开发与维护',
+      '抗压能力',
+      '目标导向',
+      '医药相关知识',
     ],
     typicalTitles: [
-      '市场专员 (Marketing Executive)',
-      '市场推广经理 (Marketing Promotion Manager)',
-      '品牌经理 (Brand Manager)',
-      '数字营销经理 (Digital Marketing Manager)',
+      '医药代表',
+      '销售专员',
+      '高级医药代表',
+      '区域销售经理',
+      '销售代表',
     ],
-    salaryRange: '12-35K·14薪',
-    description:
-      '负责品牌传播、市场推广活动策划与执行，整合线上线下渠道开展营销，以数据驱动提升品牌影响力和市场渗透率。',
+    salaryRange: '10K-30K/月（底薪+提成）',
   },
 
-  // ──────────────────────────────────────────────
-  // 5. 市场准入 (Market Access)
-  // ──────────────────────────────────────────────
+  [ExpectedDirection.MarketingExecutive]: {
+    keywords: [
+      '市场活动',
+      '品牌传播',
+      '推广策划',
+      '学术会议',
+      '数字营销',
+      '内容营销',
+      '社交媒体',
+      '线上活动',
+      '市场调研',
+      '用户画像',
+      '营销ROI',
+      '推广物料',
+      '品牌建设',
+      '市场洞察',
+      '推广策略',
+      '多渠道营销',
+      '营销自动化',
+      '患者教育',
+      '疾病 awareness',
+      '整合营销',
+    ],
+    requiredSkills: [
+      '营销策划能力',
+      '内容创作能力',
+      '数据分析能力',
+      '项目管理能力',
+      '创意思维',
+    ],
+    typicalTitles: [
+      '市场专员',
+      '市场经理',
+      '品牌经理',
+      '市场推广经理',
+      '数字化营销经理',
+    ],
+    salaryRange: '15K-40K/月',
+  },
+
   [ExpectedDirection.MarketAccess]: {
-    direction: ExpectedDirection.MarketAccess,
     keywords: [
       '市场准入',
       '医保谈判',
-      '集采',
-      '省采',
-      'DRG/DIP',
-      '准入策略',
-      '政府事务',
-      '政策解读',
-      '价格谈判',
-      '医保目录',
-      '招标采购',
-      '卫生经济学',
       '药物经济学',
+      '准入策略',
+      '医保目录',
+      '国家医保',
+      'DRG/DIP',
+      '招标采购',
+      '集采',
+      '定价策略',
+      '报销政策',
+      '卫生技术评估',
+      'HTA',
+      '证据生成',
+      '价值医疗',
       '准入路径',
+      '政策分析',
+      '政府事务',
+      '商保合作',
+      '创新支付',
     ],
     requiredSkills: [
-      '政策解读能力',
-      '政府事务经验',
-      '卫生经济学/药物经济学知识',
-      '价格谈判技巧',
-      '策略制定',
-      '跨部门协调',
-      '数据分析',
+      '政策分析能力',
+      '药物经济学知识',
+      '谈判能力',
+      '政府关系维护',
+      '数据分析能力',
     ],
     typicalTitles: [
-      '市场准入经理 (Market Access Manager)',
-      '市场准入总监 (Market Access Director)',
-      '政府事务经理 (Government Affairs Manager)',
-      '准入策略经理 (Access Strategy Manager)',
+      '市场准入经理',
+      '准入与政策总监',
+      '药物经济学经理',
+      '政府事务经理',
+      '市场准入总监',
     ],
-    salaryRange: '20-50K·14薪',
-    description:
-      '负责药品/器械的医保目录准入、集采投标及价格谈判策略，是产品商业化落地的关键角色，需深刻理解医改政策与准入路径。',
+    salaryRange: '25K-60K/月（政策密集型岗位）',
   },
 
-  // ──────────────────────────────────────────────
-  // 6. 临床试验 (Clinical Trial)
-  // ──────────────────────────────────────────────
   [ExpectedDirection.ClinicalTrial]: {
-    direction: ExpectedDirection.ClinicalTrial,
     keywords: [
       '临床试验',
       'GCP',
-      '临床研究',
-      '试验方案',
-      'CRC',
       'CRA',
-      '伦理审查',
+      '方案设计',
       '入组管理',
+      '数据监查',
+      '伦理审查',
+      '研究者沟通',
+      '试验药物管理',
+      '不良事件',
+      'SAE',
+      '稽查',
+      '临床运营',
+      'CRO管理',
+      '受试者招募',
+      '临床试验方案',
+      '知情同意',
       '数据管理',
-      '统计分析',
+      '生物统计',
       '中心筛选',
-      '监查访视',
-      '安全性报告',
-      '临床报告',
     ],
     requiredSkills: [
-      'GCP认证知识',
-      '临床研究方案设计',
-      '项目管理',
-      '数据管理',
-      '法规合规意识',
-      '统计分析基础',
-      '沟通协调能力',
+      'GCP证书',
+      '临床监查经验',
+      '方案理解能力',
+      '项目管理能力',
+      '医学/药学背景',
     ],
     typicalTitles: [
-      '临床监查员 CRA (Clinical Research Associate)',
-      '临床研究协调员 CRC (Clinical Research Coordinator)',
-      '临床项目经理 (Clinical Project Manager)',
-      '临床研究经理 (Clinical Research Manager)',
+      '临床监查员',
+      '高级CRA',
+      '临床项目经理',
+      '临床运营经理',
+      '临床试验总监',
     ],
-    salaryRange: '12-35K·14薪',
-    description:
-      '负责临床试验项目的执行管理，涵盖方案设计、中心筛选、入组管理、监查访视和数据管理，确保研究符合GCP规范。',
+    salaryRange: '15K-45K/月（CRA经验越高薪资越高）',
   },
 
-  // ──────────────────────────────────────────────
-  // 7. 药物警戒 (Pharmacovigilance)
-  // ──────────────────────────────────────────────
   [ExpectedDirection.Pharmacovigilance]: {
-    direction: ExpectedDirection.Pharmacovigilance,
     keywords: [
       '药物警戒',
       '不良反应报告',
+      'ADR',
       'AE',
-      'SAE',
       'PSUR',
+      'DSUR',
       '信号检测',
       '风险管理',
-      '安全监测',
+      'RMP',
       '个例报告',
-      '定期安全报告',
+      '文献监测',
+      '安全性数据',
+      '上市后监测',
+      '药品安全',
+      '定期安全性更新报告',
+      '安全性分析',
+      '合规报告',
+      'E2B',
       '药物警戒体系',
-      '风险评估',
+      '安全信号',
     ],
     requiredSkills: [
       '药物警戒法规知识',
       '医学/药学背景',
-      'AE/SAE评估',
-      '信号检测分析',
+      '报告撰写能力',
+      '数据分析能力',
       '英文文献阅读',
-      '报告撰写',
-      '跨部门协作',
     ],
     typicalTitles: [
-      '药物警戒专员 (Pharmacovigilance Specialist)',
-      '药物警戒经理 (Pharmacovigilance Manager)',
-      '安全监测经理 (Drug Safety Manager)',
-      'PV负责人 (Head of Pharmacovigilance)',
+      '药物警戒专员',
+      '药物警戒经理',
+      '药品安全经理',
+      'PV经理',
+      '药物警戒总监',
     ],
-    salaryRange: '12-35K·14薪',
-    description:
-      '负责药品上市后安全监测与不良反应报告管理，建立药物警戒体系，开展信号检测和风险评估，保障用药安全合规。',
+    salaryRange: '15K-40K/月',
   },
 
-  // ──────────────────────────────────────────────
-  // 8. 注册事务 (Regulatory Affairs)
-  // ──────────────────────────────────────────────
   [ExpectedDirection.RegulatoryAffairs]: {
-    direction: ExpectedDirection.RegulatoryAffairs,
     keywords: [
-      '药品注册',
-      'NMPA',
       '注册申报',
-      'CTD',
-      'eCTD',
-      '注册策略',
-      '补充申请',
-      'ANDA',
-      'NDA',
+      'NMPA',
       'IND',
-      '注册检验',
+      'NDA',
+      'CTD格式',
+      '注册策略',
       '技术审评',
+      '补充申请',
+      '再注册',
+      '注册资料',
+      '法规事务',
+      '药品注册',
+      '医疗器械注册',
+      '临床试验批件',
       '注册法规',
+      '合规管理',
+      '申报路径',
+      '审评沟通',
+      '一致性评价',
+      '注册分类',
     ],
     requiredSkills: [
-      '药品注册法规知识',
-      'CTD/eCTD格式',
-      '技术审评理解',
-      '申报材料撰写',
-      '项目管理',
+      '法规知识（药品/器械注册管理办法）',
+      'CTD撰写能力',
+      '英文读写能力',
+      '注册策略制定',
       '跨部门协调',
-      '英语读写',
     ],
     typicalTitles: [
-      '注册专员 (Regulatory Affairs Specialist)',
-      '注册经理 (Regulatory Affairs Manager)',
-      '注册总监 (Regulatory Affairs Director)',
-      '注册事务高级经理 (Senior RA Manager)',
+      '注册专员',
+      '注册经理',
+      '注册事务总监',
+      '法规事务经理',
+      'RA Manager',
     ],
-    salaryRange: '12-40K·14薪',
-    description:
-      '负责药品/器械注册申报的全流程管理，制定注册策略，撰写和提交CTD/eCTD申报材料，与NMPA沟通技术审评事宜。',
+    salaryRange: '15K-45K/月',
   },
 
-  // ──────────────────────────────────────────────
-  // 9. 商务拓展 (Business Development)
-  // ──────────────────────────────────────────────
   [ExpectedDirection.BusinessDevelopment]: {
-    direction: ExpectedDirection.BusinessDevelopment,
     keywords: [
       '商务拓展',
       'BD',
-      'license-in',
-      'license-out',
+      'license in',
+      'license out',
+      '合作引进',
       '项目评估',
       '尽职调查',
-      '合作谈判',
-      '技术转移',
-      '专利许可',
-      '投资并购',
-      '管线分析',
-      '估值建模',
+      '交易结构',
+      '商务谈判',
+      '合作协议',
+      '市场尽调',
+      '管线评估',
+      '技术引进',
+      '授权交易',
+      '估值模型',
+      '行业洞察',
+      '商务沟通',
       '战略合作',
+      '并购',
+      '投资评估',
     ],
     requiredSkills: [
-      '项目评估能力',
-      '财务建模与估值',
-      '尽职调查',
-      '商务谈判',
-      '行业洞察',
-      '英文商务沟通',
-      '法律合同审阅',
+      '商务谈判能力',
+      '财务分析/估值能力',
+      '行业洞察力',
+      '英文沟通能力',
+      '项目管理能力',
     ],
     typicalTitles: [
-      '商务拓展经理 (Business Development Manager)',
-      'BD总监 (BD Director)',
-      '战略合作经理 (Strategic Partnership Manager)',
-      '投资并购经理 (M&A Manager)',
+      'BD经理',
+      '商务拓展总监',
+      '投资并购经理',
+      '授权引进经理',
+      '战略合作经理',
     ],
-    salaryRange: '20-60K·14薪',
-    description:
-      '负责企业对外合作与管线拓展，开展license-in/out交易、项目评估、尽职调查和合作谈判，驱动企业战略增长。',
+    salaryRange: '25K-70K/月（资深BD薪资弹性大）',
   },
 
-  // ──────────────────────────────────────────────
-  // 10. 医疗器械销售 (Device Sales)
-  // ──────────────────────────────────────────────
   [ExpectedDirection.DeviceSales]: {
-    direction: ExpectedDirection.DeviceSales,
     keywords: [
       '医疗器械销售',
-      '渠道管理',
-      '经销商管理',
-      '招投标',
-      '终端覆盖',
-      '产品培训',
-      '售后支持',
-      '装机管理',
-      '耗材销售',
+      '设备招标',
+      '终端开发',
+      '渠道分销',
+      '医院采购',
+      '设备演示',
+      '技术支持',
+      '代理商管理',
+      '设备装机',
+      '售后服务',
+      '招标投标',
+      '设备科',
+      '科室开发',
       '设备维护',
-      '渠道开发',
-      '价格管理',
+      '销售达成',
+      '经销商管理',
+      '招标文件',
+      '设备推广',
+      '耗材销售',
+      '临床科室',
     ],
     requiredSkills: [
+      '销售与客户开发',
       '医疗器械产品知识',
-      '渠道开发与管理',
-      '招投标经验',
-      '客户关系维护',
-      '售后支持能力',
-      '销售谈判',
-      '区域管理',
+      '招标流程熟悉',
+      '技术演示能力',
+      '渠道管理能力',
     ],
     typicalTitles: [
-      '医疗器械销售代表 (Medical Device Sales Representative)',
-      '区域销售经理 (Regional Sales Manager)',
-      '渠道经理 (Channel Manager)',
-      '大客户经理 (Key Account Manager)',
+      '医疗器械销售代表',
+      '设备销售经理',
+      '区域销售经理',
+      '耗材销售代表',
+      '大区销售总监',
     ],
-    salaryRange: '10-30K·13薪',
-    description:
-      '负责医疗器械产品的区域销售与渠道管理，涵盖经销商开发、招投标、装机和售后支持，需兼具设备与耗材销售能力。',
+    salaryRange: '10K-35K/月（底薪+提成，设备类提成较高）',
   },
 };
+
+/**
+ * Returns the keyword set for the given direction.
+ *
+ * @param direction - The expected career direction
+ * @returns The keyword set for that direction
+ */
+export function getKeywordSet(direction: ExpectedDirection): KeywordSet {
+  return keywordDatabase[direction];
+}
+
+/**
+ * Collects keywords from all directions into a flat array.
+ * Useful for general industry keyword matching.
+ *
+ * @returns Array of all unique keywords across all directions
+ */
+export function getAllKeywords(): string[] {
+  const allKeywords = new Set<string>();
+  for (const set of Object.values(keywordDatabase)) {
+    for (const kw of set.keywords) {
+      allKeywords.add(kw);
+    }
+    for (const sk of set.requiredSkills) {
+      allKeywords.add(sk);
+    }
+  }
+  return Array.from(allKeywords);
+}
