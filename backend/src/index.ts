@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import path from 'path';
 import analysisRouter from './routes/analysis';
 
 // Load environment variables
@@ -10,15 +9,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS configuration — allow localhost in dev, all origins in production
-const allowedOrigins =
-  process.env.NODE_ENV === 'production'
-    ? true
-    : ['http://localhost:5173', 'http://127.0.0.1:5173'];
-
+// CORS configuration — allow frontend on localhost:5173
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
   })
@@ -40,18 +34,6 @@ app.get('/api/health', (_req, res) => {
 // Mount analysis routes
 app.use('/api', analysisRouter);
 
-// ─── Serve frontend static files in production ───
-// The built React app lives in frontend/dist (relative to repo root).
-// In compiled JS, __dirname = backend/dist, so ../../frontend/dist points to the right place.
-if (process.env.NODE_ENV === 'production') {
-  const frontendDist = path.resolve(__dirname, '../../frontend/dist');
-  app.use(express.static(frontendDist));
-  // SPA fallback: any non-API GET request serves index.html
-  app.get('*', (_req, res) => {
-    res.sendFile(path.join(frontendDist, 'index.html'));
-  });
-}
-
 // Global error handler
 app.use(
   (
@@ -72,6 +54,7 @@ app.use(
 // Start server
 app.listen(PORT, () => {
   console.log(`[Med Resume Diag] Server running on http://localhost:${PORT}`);
+  console.log('[Med Resume Diag] Rule engine mode — no API key required.');
 });
 
 export default app;
