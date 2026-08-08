@@ -46,9 +46,9 @@ function isValidDirection(direction: string): direction is ExpectedDirection {
  *
  * Receives a .docx resume file and an expected direction, then:
  * 1. Parses the Word document to extract text and structured data
- * 2. Runs rule-based analysis (suggestions + scores + job matching in parallel)
- * 3. Searches job market information (web scrape with database fallback)
- * 4. Returns the aggregated analysis result
+ * 2. Runs rule engine analysis (scoring + suggestions + job matching in parallel)
+ * 3. Scrapes job market information (with fallback to curated data)
+ * 4. Returns the aggregated analysis result including total score and dimensions
  *
  * Request:
  *   - multipart/form-data
@@ -98,8 +98,8 @@ router.post('/analyze', upload.single('file'), async (req: Request, res: Respons
       });
     }
 
-    // Step 2: Run rule-based analysis (scores + suggestions + job matching in parallel)
-    console.log('[Analyze] Step 2/3: Running analysis (scores + suggestions + job matching)...');
+    // Step 2: Run rule engine analysis (scoring + suggestions + job matching in parallel)
+    console.log('[Analyze] Step 2/3: Running rule engine analysis (scoring + suggestions + job matching)...');
 
     const [analysisData, jobMatches] = await Promise.all([
       analyzeResume(parsedResume.rawText, parsedResume.structured, direction),
@@ -107,19 +107,23 @@ router.post('/analyze', upload.single('file'), async (req: Request, res: Respons
     ]);
 
     console.log(
-      `[Analyze] Got ${analysisData.suggestions.length} suggestions, ` +
-      `overall score ${analysisData.overallScore}/100, ` +
+      `[Analyze] Got totalScore=${analysisData.totalScore}, ` +
+      `${analysisData.dimensions.length} dimensions, ` +
+      `${analysisData.suggestions.length} suggestions, ` +
       `${jobMatches.length} job matches`
     );
 
-    // Step 3: Search job market (web scrape with database fallback)
+    // Step 3: Search job market via web scraping (with fallback)
     console.log('[Analyze] Step 3/3: Searching job market information...');
     const jobMarket = await searchJobMarket(direction);
     console.log('[Analyze] Job market info retrieved');
 
     // Assemble final result
     const result: AnalysisResult = {
-      ...analysisData,
+      totalScore: analysisData.totalScore,
+      dimensions: analysisData.dimensions,
+      summary: analysisData.summary,
+      suggestions: analysisData.suggestions,
       jobMatches,
       jobMarket,
     };
