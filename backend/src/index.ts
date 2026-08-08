@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
 import analysisRouter from './routes/analysis';
 
 // Load environment variables
@@ -9,10 +11,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS configuration — allow frontend on localhost:5173
+// CORS configuration — allow all origins in production, localhost in dev
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: true,
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
   })
@@ -33,6 +35,16 @@ app.get('/api/health', (_req, res) => {
 
 // Mount analysis routes
 app.use('/api', analysisRouter);
+
+// Serve frontend static files (production)
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  // SPA fallback: send index.html for all non-API GET requests
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
 
 // Global error handler
 app.use(
