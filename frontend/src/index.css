@@ -12,11 +12,170 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #F8F9FA;
+  background-color: #F0F2F5;
 }
 
 .app-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Dashboard layout */
+.dashboard-root {
+  display: flex;
+  min-height: 100vh;
+  background-color: #F0F2F5;
+}
+
+.dashboard-sidebar {
+  width: 200px;
+  min-width: 200px;
+  background-color: #334155;
+  color: #E2E8F0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.dashboard-main {
+  flex: 1;
+  margin-left: 200px;
+  margin-right: 280px;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.dashboard-right {
+  width: 280px;
+  min-width: 280px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  background-color: #F0F2F5;
+  padding: 24px 16px;
+}
+
+/* Card styles */
+.dash-card {
+  background: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.dash-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+/* Score bar */
+.score-bar-track {
+  height: 8px;
+  background-color: #E5E7EB;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+/* Status pills */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pill-green {
+  background-color: #059669;
+  color: #FFFFFF;
+}
+
+.pill-red {
+  background-color: #DC2626;
+  color: #FFFFFF;
+}
+
+.pill-amber {
+  background-color: #D97706;
+  color: #FFFFFF;
+}
+
+.pill-gray {
+  background-color: #E5E7EB;
+  color: #374151;
+}
+
+/* Sidebar nav item */
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #CBD5E1;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.sidebar-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #F1F5F9;
+}
+
+.sidebar-nav-item.active {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+  border-left-color: #D97706;
+}
+
+/* Circular score ring */
+.score-ring-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.score-ring-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* Scrollbar */
+.dashboard-main::-webkit-scrollbar,
+.dashboard-right::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dashboard-main::-webkit-scrollbar-thumb,
+.dashboard-right::-webkit-scrollbar-thumb {
+  background-color: #CBD5E1;
+  border-radius: 3px;
+}
+
+.dashboard-main::-webkit-scrollbar-track,
+.dashboard-right::-webkit-scrollbar-track {
+  background-color: transparent;
 }
