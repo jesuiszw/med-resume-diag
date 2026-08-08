@@ -39,11 +39,11 @@ function extractStructuredData(text: string): StructuredResumeData {
 
   // Section header patterns (Chinese + English)
   const sectionPatterns = {
-    basicInfo: /个人信息|基本信息|联系方式|Profile|Personal|Contact/i,
-    education: /教育背景|教育经历|教育\/培训|教育培训|教育信息|培训经历|学历|Education|Academic|Train/i,
+    basicInfo: /个人信息|基本信息|联系方式|联系方式|Profile|Personal|Contact/i,
+    education: /教育背景|教育经历|学历|Education|Academic/i,
     workExperience: /工作经历|工作经验|工作履历|Work Experience|Employment|Professional Experience/i,
-    projectExperience: /项目经历|项目经验|Project Experience|Projects/i,
-    skills: /技能|专业技能|核心技能|职业技能|Skills|Technical Skills|Competencies/i,
+    projectExperience: /项目经历|项目经验|项目经历|Project Experience|Projects/i,
+    skills: /技能|专业技能|核心技能|Skills|Technical Skills|Competencies/i,
   };
 
   const sections: Record<keyof StructuredResumeData, string[]> = {
