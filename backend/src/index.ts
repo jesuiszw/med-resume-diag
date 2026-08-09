@@ -5,6 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import analysisRouter from './routes/analysis';
 import smsRouter from './routes/sms';
+import authRouter from './routes/auth';
 
 // Load environment variables
 dotenv.config();
@@ -17,7 +18,7 @@ app.use(
   cors({
     origin: true,
     methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
@@ -39,6 +40,9 @@ app.use('/api', analysisRouter);
 
 // Mount SMS routes
 app.use('/api', smsRouter);
+
+// Mount auth routes
+app.use('/api', authRouter);
 
 // Serve frontend static files (production)
 const frontendDist = path.join(__dirname, '../../frontend/dist');
