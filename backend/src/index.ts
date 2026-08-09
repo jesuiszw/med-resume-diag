@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import analysisRouter from './routes/analysis';
+import smsRouter from './routes/sms';
 
 // Load environment variables
 dotenv.config();
@@ -35,6 +36,9 @@ app.get('/api/health', (_req, res) => {
 
 // Mount analysis routes
 app.use('/api', analysisRouter);
+
+// Mount SMS routes
+app.use('/api', smsRouter);
 
 // Serve frontend static files (production)
 const frontendDist = path.join(__dirname, '../../frontend/dist');
