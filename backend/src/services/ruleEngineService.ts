@@ -6,7 +6,7 @@ import type {
   ExpectedDirection,
 } from '../types';
 import { DIRECTION_LABELS } from '../types';
-import { getKeywordSet, getAllKeywords } from '../data/keywordDatabase';
+import { getKeywordSet } from '../data/keywordDatabase';
 
 /**
  * RuleEngineService — Pure rule-based resume analysis engine.
@@ -22,12 +22,16 @@ import { getKeywordSet, getAllKeywords } from '../data/keywordDatabase';
  * Weak dimensions generate targeted OptimizationSuggestion entries.
  */
 
-/** Weight constants for each dimension. */
+/** Weight constants for each dimension.
+ * Direction-specific dimensions (industryMatch + professionalism) total 55%
+ * Direction-agnostic dimensions (completeness + quantified + structure) total 45%
+ * This ensures different career directions produce meaningfully different scores.
+ */
 const WEIGHTS = {
-  completeness: 25,
-  industryMatch: 30,
-  quantifiedExpression: 15,
-  professionalism: 15,
+  completeness: 20,
+  industryMatch: 35,
+  quantifiedExpression: 10,
+  professionalism: 20,
   structure: 15,
 } as const;
 
@@ -196,16 +200,45 @@ function scoreIndustryMatch(
     }
   }
 
-  // Scoring: each matched keyword gives 2 points, skills give 1 point each, capped at maxScore
-  const score = Math.min(maxScore, matchedKeywords.length * 2 + matchedSkills.length * 1);
+  // Scoring: each matched keyword gives 2 points, skills give 1 point each
+  // But apply a match-ratio penalty: if the resume matches very few keywords
+  // relative to the total keyword pool, it indicates the candidate lacks
+  // experience in this direction, so the score is severely capped.
+  const rawScore = matchedKeywords.length * 2 + matchedSkills.length * 1;
+
+  // Match ratio = how many of the direction's keywords were found
+  const totalDirectionTerms = directionKeywords.length + skillKeywords.length;
+  const totalMatched = matchedKeywords.length + matchedSkills.length;
+  const matchRatio = totalMatched / totalDirectionTerms;
+
+  // Penalty tiers based on match ratio:
+  //   < 10% → barely any relevant experience → cap at 20% of max
+  //   < 20% → limited experience → cap at 40% of max
+  //   < 35% → some experience → cap at 70% of max
+  //   >= 35% → solid experience → no cap
+  let ratioCap: number;
+  if (matchRatio < 0.10) {
+    ratioCap = Math.round(maxScore * 0.20);
+  } else if (matchRatio < 0.20) {
+    ratioCap = Math.round(maxScore * 0.40);
+  } else if (matchRatio < 0.35) {
+    ratioCap = Math.round(maxScore * 0.70);
+  } else {
+    ratioCap = maxScore;
+  }
+
+  const score = Math.min(rawScore, ratioCap);
 
   const details: string[] = [];
-  if (missingKeywords.length > 0) {
+  if (matchedKeywords.length === 0 && matchedSkills.length === 0) {
+    details.push('简历中几乎未出现该方向的核心行业术语，与该岗位方向匹配度极低');
+  } else if (matchRatio < 0.20) {
+    details.push(`该方向关键词匹配率仅${Math.round(matchRatio * 100)}%，相关经验较少`);
     const topMissing = missingKeywords.slice(0, 5);
     details.push(`可补充方向相关关键词：${topMissing.join('、')}${missingKeywords.length > 5 ? '等' : ''}`);
-  }
-  if (matchedKeywords.length === 0) {
-    details.push('简历中几乎未出现该方向的核心行业术语');
+  } else if (missingKeywords.length > 0) {
+    const topMissing = missingKeywords.slice(0, 5);
+    details.push(`可补充方向相关关键词：${topMissing.join('、')}${missingKeywords.length > 5 ? '等' : ''}`);
   }
 
   return {
@@ -269,8 +302,13 @@ function scoreQuantifiedExpression(rawText: string): ScoreDimension {
 }
 
 /**
- * Scores the professionalism of the resume.
- * Checks for professional terminology, certifications, and industry acronyms.
+ * Scores the professionalism of the resume for the SPECIFIC target direction.
+ * Checks for professional terminology (direction-specific) and certifications.
+ *
+ * Unlike the previous version which used ALL keywords from ALL directions,
+ * this version only counts keywords relevant to the target direction,
+ * so a marketing resume doesn't get inflated professionalism scores
+ * when evaluated against a clinical operations direction.
  *
  * @param rawText - The full resume text
  * @param direction - The expected career direction
@@ -281,8 +319,11 @@ function scoreProfessionalism(
   direction: ExpectedDirection
 ): ScoreDimension {
   const maxScore = WEIGHTS.professionalism;
+  const keywordSet = getKeywordSet(direction);
+  const directionKeywords = keywordSet.keywords;
+  const directionSkills = keywordSet.requiredSkills;
 
-  // Check for certification keywords
+  // Check for certification keywords (universal — MBA, PMP, etc. are relevant across directions)
   let certCount = 0;
   const foundCerts: string[] = [];
   for (const cert of CERTIFICATION_KEYWORDS) {
@@ -292,28 +333,39 @@ function scoreProfessionalism(
     }
   }
 
-  // Check for general industry keywords (all directions)
-  const allKeywords = getAllKeywords();
-  let generalKwCount = 0;
-  for (const kw of allKeywords) {
-    if (rawText.includes(kw)) {
-      generalKwCount++;
+  // Count direction-specific keywords (flexible matching)
+  let directionKwCount = 0;
+  const matchedDirectionKw: string[] = [];
+  for (const kw of directionKeywords) {
+    if (flexibleIncludes(rawText, kw)) {
+      directionKwCount++;
+      matchedDirectionKw.push(kw);
     }
   }
 
-  // Cert score: up to 60% of dimension
-  const certRatio = Math.min(certCount / 3, 1.0);
-  // General keyword score: up to 40% of dimension
-  const generalRatio = Math.min(generalKwCount / 10, 1.0);
+  // Count direction-specific skills (flexible matching)
+  let directionSkillCount = 0;
+  for (const sk of directionSkills) {
+    if (flexibleIncludes(rawText, sk)) {
+      directionSkillCount++;
+    }
+  }
 
-  const score = Math.round((certRatio * 0.6 + generalRatio * 0.4) * maxScore);
+  // Cert score: up to 40% of dimension (universal credentials)
+  const certRatio = Math.min(certCount / 3, 1.0);
+  // Direction-specific score: up to 60% of dimension
+  // Need at least 5 direction-specific terms to get full marks
+  const directionTerms = directionKwCount + directionSkillCount;
+  const directionRatio = Math.min(directionTerms / 5, 1.0);
+
+  const score = Math.round((certRatio * 0.4 + directionRatio * 0.6) * maxScore);
 
   const details: string[] = [];
   if (certCount === 0) {
     details.push('简历中未提及相关职业资格证书或专业认证');
   }
-  if (generalKwCount < 5) {
-    details.push('专业术语使用偏少，建议增加行业专业词汇');
+  if (directionTerms < 3) {
+    details.push(`该方向专业术语使用偏少（匹配${directionTerms}个），建议增加行业专业词汇`);
   }
 
   return {
